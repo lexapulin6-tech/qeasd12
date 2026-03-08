@@ -1,127 +1,73 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org"></script>
-    <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
-        :root { --primary: #f39c12; --bg: #0f1115; --card-bg: rgba(255, 255, 255, 0.07); --text: #ffffff; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; -webkit-user-select: none; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: var(--primary); margin: 0; font-size: 22px; text-transform: uppercase; }
-        
-        /* Сетка товаров */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 160px; }
-        
+        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; text-align: center; }
+        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 120px; }
         .card { 
-            background: var(--card-bg); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 12px; 
-            padding: 15px; 
-            text-align: center; 
-            transition: 0.2s;
+            background: #1e1e1e; border: 1px solid #333; padding: 15px; 
+            border-radius: 12px; width: 40%; cursor: pointer; 
         }
-        
-        .card.selected { 
-            border-color: var(--primary); 
-            background: rgba(243, 156, 18, 0.15); 
-            box-shadow: 0 0 15px rgba(243, 156, 18, 0.2); 
-        }
-
-        .card b { display: block; font-size: 18px; margin-bottom: 5px; }
-        .card span { color: var(--primary); font-weight: bold; }
-
-        /* Нижняя панель */
-        .footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: #16191f; padding: 15px; 
-            border-top: 1px solid rgba(255, 255, 255, 0.1); 
-            z-index: 100; 
-        }
-        
-        input { 
-            width: 100%; padding: 12px; border-radius: 10px; 
-            border: 1px solid #333; background: #000; color: #fff; 
-            margin-bottom: 10px; box-sizing: border-box; text-align: center; font-size: 16px;
-        }
-
-        button { 
-            width: 100%; padding: 15px; border-radius: 10px; border: none;
-            background: var(--primary); color: #000; font-weight: bold; 
-            font-size: 16px; opacity: 0.4; transition: 0.3s;
-        }
+        .card.active { border-color: #f39c12; background: rgba(243,156,18,0.1); }
+        .card b { display: block; font-size: 18px; }
+        .card span { color: #f39c12; font-weight: bold; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #121212; padding: 15px; border-top: 1px solid #333; }
+        input { width: 90%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; }
+        button { width: 95%; background: #f39c12; color: #000; border: none; padding: 15px; border-radius: 10px; font-weight: bold; opacity: 0.3; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>PUBG UC SHOP</h1>
-        <p style="color: #888; font-size: 12px;">Выберите пакет и введите ID</p>
-    </div>
-
-    <div class="grid" id="container">
-        <!-- Карточки появятся здесь -->
-    </div>
+    <h2>PUBG UC SHOP</h2>
+    <div class="grid" id="cont"></div>
 
     <div class="footer">
-        <input type="number" id="p_id" placeholder="Ваш Player ID">
-        <button id="main_btn" disabled>ОФОРМИТЬ ЗАКАЗ</button>
+        <input type="number" id="uid" placeholder="Введите Player ID">
+        <button id="btn" disabled>ОФОРМИТЬ ЗАКАЗ</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const dataPrices = {
-            "60": 90, "120": 170, "180": 250, "240": 325, "325": 420, "385": 490, "445": 570, "660": 810, "720": 890, 
-            "985": 1200, "1320": 1600, "1800": 2050, "1920": 2200, "2125": 2425, "2460": 2815, "3850": 3950, 
-            "4510": 4750, "5650": 6000, "8100": 7900, "9900": 10000, "11950": 11850, "16200": 15800, 
-            "24300": 23850, "32400": 31650, "40500": 39500, "81000": 77000
-        };
+        // Упрощенный список для теста (если заработает - добавим остальные)
+        const items = [
+            {uc: "60", p: 90}, {uc: "120", p: 170}, {uc: "180", p: 250}, {uc: "240", p: 325},
+            {uc: "325", p: 420}, {uc: "660", p: 810}, {uc: "1320", p: 1600}, {uc: "1800", p: 2050}
+        ];
 
-        let selected = null;
-        const container = document.getElementById('container');
-        const btn = document.getElementById('main_btn');
-        const input = document.getElementById('p_id');
+        let sel = null;
+        const cont = document.getElementById('cont');
+        const btn = document.getElementById('btn');
+        const uid = document.getElementById('uid');
 
-        // Функция проверки формы
-        function validate() {
-            if (selected && input.value.length >= 5) {
-                btn.disabled = false;
-                btn.style.opacity = "1";
+        function check() {
+            if (sel && uid.value.length >= 5) {
+                btn.disabled = false; btn.style.opacity = "1";
             } else {
-                btn.disabled = true;
-                btn.style.opacity = "0.4";
+                btn.disabled = true; btn.style.opacity = "0.3";
             }
         }
 
-        // Рендерим карточки вручную для надежности
-        Object.keys(dataPrices).forEach(uc => {
-            const price = dataPrices[uc];
-            const item = document.createElement('div');
-            item.className = 'card';
-            item.innerHTML = `<b>💎 ${uc}</b> <span>${price}₽</span>`;
-            
-            item.onclick = () => {
-                document.querySelectorAll('.card').forEach(el => el.classList.remove('selected'));
-                item.classList.add('selected');
-                selected = { uc, price };
-                validate();
-                tg.HapticFeedback.impactOccurred('light');
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `<b>${item.uc} UC</b><span>${item.p}₽</span>`;
+            div.onclick = () => {
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                div.classList.add('active');
+                sel = item;
+                check();
             };
-            container.appendChild(item);
+            cont.appendChild(div);
         });
 
-        input.addEventListener('input', validate);
-
+        uid.oninput = check;
         btn.onclick = () => {
-            const payload = {
-                amount: selected.uc,
-                price: selected.price,
-                player_id: input.value
-            };
-            tg.sendData(JSON.stringify(payload));
+            tg.sendData(JSON.stringify({amount: sel.uc, price: sel.p, player_id: uid.value}));
         };
     </script>
 </body>
