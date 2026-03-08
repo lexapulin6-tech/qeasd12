@@ -5,74 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org"></script>
     <style>
-        body { font-family: sans-serif; background: #0f1115; color: white; margin: 0; padding: 15px; -webkit-user-select: none; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: #f39c12; font-size: 22px; margin: 0; text-transform: uppercase; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 160px; }
-        
+        body { font-family: sans-serif; background: #0f1115; color: white; margin: 0; padding: 15px; text-align: center; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 180px; }
         .card { 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 12px; padding: 15px; text-align: center; transition: 0.2s;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.2s;
         }
-        
-        .card.selected { 
-            border-color: #f39c12; background: rgba(243, 156, 18, 0.15); 
-            box-shadow: 0 0 15px rgba(243, 156, 18, 0.2); 
-        }
-
+        .card.active { border-color: #f39c12; background: rgba(243, 156, 18, 0.15); box-shadow: 0 0 15px rgba(243, 156, 18, 0.2); }
         .card b { display: block; font-size: 18px; margin-bottom: 5px; }
         .card span { color: #f39c12; font-weight: bold; }
-
-        .footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: #16191f; padding: 15px; 
-            border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 100; 
-        }
-        
-        input { 
-            width: 100%; padding: 12px; border-radius: 10px; 
-            border: 1px solid #333; background: #000; color: #fff; 
-            margin-bottom: 10px; box-sizing: border-box; text-align: center; font-size: 16px;
-        }
-
-        button { 
-            width: 100%; padding: 15px; border-radius: 10px; border: none;
-            background: #f39c12; color: #000; font-weight: bold; 
-            font-size: 16px; opacity: 0.4; transition: 0.3s;
-        }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #16191f; padding: 20px; border-top: 1px solid #333; z-index: 100; }
+        input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #333; background: #000; color: #fff; margin-bottom: 10px; box-sizing: border-box; text-align: center; font-size: 16px; }
+        button { width: 100%; padding: 16px; border-radius: 10px; border: none; background: #f39c12; color: #000; font-weight: bold; font-size: 16px; opacity: 0.3; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>PUBG UC SHOP</h1>
-        <p style="color: #888; font-size: 12px; margin-top: 5px;">Выберите пакет и введите свой ID</p>
-    </div>
+    <h2 style="color: #f39c12; text-transform: uppercase; letter-spacing: 1px;">PUBG UC SHOP</h2>
 
-    <div class="grid" id="container"></div>
+    <div class="grid">
+        <!-- ПОЛНЫЙ ПРАЙС-ЛИСТ -->
+        <div class="card" onclick="select(this, '60', 90)"><b>💎 60 UC</b><span>90₽</span></div>
+        <div class="card" onclick="select(this, '120', 170)"><b>💎 120 UC</b><span>170₽</span></div>
+        <div class="card" onclick="select(this, '180', 250)"><b>💎 180 UC</b><span>250₽</span></div>
+        <div class="card" onclick="select(this, '240', 325)"><b>💎 240 UC</b><span>325₽</span></div>
+        <div class="card" onclick="select(this, '325', 420)"><b>💎 325 UC</b><span>420₽</span></div>
+        <div class="card" onclick="select(this, '385', 490)"><b>💎 385 UC</b><span>490₽</span></div>
+        <div class="card" onclick="select(this, '445', 570)"><b>💎 445 UC</b><span>570₽</span></div>
+        <div class="card" onclick="select(this, '660', 810)"><b>💎 660 UC</b><span>810₽</span></div>
+        <div class="card" onclick="select(this, '720', 890)"><b>💎 720 UC</b><span>890₽</span></div>
+        <div class="card" onclick="select(this, '985', 1200)"><b>💎 985 UC</b><span>1200₽</span></div>
+        <div class="card" onclick="select(this, '1320', 1600)"><b>💎 1320 UC</b><span>1600₽</span></div>
+        <div class="card" onclick="select(this, '1800', 2050)"><b>💎 1800 UC</b><span>2050₽</span></div>
+        <div class="card" onclick="select(this, '1920', 2200)"><b>💎 1920 UC</b><span>2200₽</span></div>
+        <div class="card" onclick="select(this, '2125', 2425)"><b>💎 2125 UC</b><span>2425₽</span></div>
+        <div class="card" onclick="select(this, '2460', 2815)"><b>💎 2460 UC</b><span>2815₽</span></div>
+        <div class="card" onclick="select(this, '3850', 3950)"><b>💎 3850 UC</b><span>3950₽</span></div>
+        <div class="card" onclick="select(this, '4510', 4750)"><b>💎 4510 UC</b><span>4750₽</span></div>
+        <div class="card" onclick="select(this, '5650', 6000)"><b>💎 5650 UC</b><span>6000₽</span></div>
+        <div class="card" onclick="select(this, '8100', 7900)"><b>💎 8100 UC</b><span>7900₽</span></div>
+        <div class="card" onclick="select(this, '9900', 10000)"><b>💎 9900 UC</b><span>10000₽</span></div>
+        <div class="card" onclick="select(this, '11950', 11850)"><b>💎 11950 UC</b><span>11850₽</span></div>
+        <div class="card" onclick="select(this, '16200', 15800)"><b>💎 16200 UC</b><span>15800₽</span></div>
+        <div class="card" onclick="select(this, '24300', 23850)"><b>💎 24300 UC</b><span>23850₽</span></div>
+        <div class="card" onclick="select(this, '32400', 31650)"><b>💎 32400 UC</b><span>31650₽</span></div>
+        <div class="card" onclick="select(this, '40500', 39500)"><b>💎 40500 UC</b><span>39500₽</span></div>
+        <div class="card" onclick="select(this, '81000', 77000)"><b>💎 81000 UC</b><span>77000₽</span></div>
+    </div>
 
     <div class="footer">
-        <input type="number" id="p_id" placeholder="Ваш Player ID">
-        <button id="main_btn" disabled>ОФОРМИТЬ ЗАКАЗ</button>
+        <input type="number" id="p_id" placeholder="Введите Ваш Player ID">
+        <button id="main_btn" disabled onclick="sendData()">Оформить заказ</button>
     </div>
 
-    <script>
+   <script>
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
+        
+        // Разворачиваем на весь экран
+        tg.ready();
         tg.expand();
-
-        // ПОЛНЫЙ ПРАЙС-ЛИСТ (из твоего списка)
-        const prices = {
-            "60": 90, "120": 170, "180": 250, "240": 325, "325": 420, "385": 490, "445": 570, "660": 810, "720": 890, 
-            "985": 1200, "1320": 1600, "1800": 2050, "1920": 2200, "2125": 2425, "2460": 2815, "3850": 3950, 
-            "4510": 4750, "5650": 6000, "8100": 7900, "9900": 10000, "11950": 11850, "16200": 15800, 
-            "24300": 23850, "32400": 31650, "40500": 39500, "81000": 77000
-        };
-
+        
         let selected = null;
-        const container = document.getElementById('container');
         const btn = document.getElementById('main_btn');
         const input = document.getElementById('p_id');
+
+        function select(el, uc, price) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            selected = { uc: uc, price: price };
+            validate();
+            
+            // Вибрация при выборе
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
 
         function validate() {
             if (selected && input.value.trim().length >= 5) {
@@ -80,41 +88,32 @@
                 btn.style.opacity = "1";
             } else {
                 btn.disabled = true;
-                btn.style.opacity = "0.4";
+                btn.style.opacity = "0.3";
             }
         }
 
-        // Отрисовка всех карточек из списка цен
-        for (let uc in prices) {
-            const price = prices[uc];
-            const item = document.createElement('div');
-            item.className = 'card';
-            item.innerHTML = `<b>💎 ${uc} UC</b> <span>${price}₽</span>`;
-            
-            item.onclick = () => {
-                document.querySelectorAll('.card').forEach(el => el.classList.remove('selected'));
-                item.classList.add('selected');
-                selected = { uc: uc, price: price };
-                validate();
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            };
-            container.appendChild(item);
-        }
-
+        // Слушатель ввода ID
         input.addEventListener('input', validate);
 
-        btn.onclick = () => {
+        // Обработчик нажатия кнопки
+        btn.addEventListener('click', () => {
             if (!selected || input.value.length < 5) return;
-            
-            const payload = {
+
+            const data = {
                 amount: selected.uc,
                 price: selected.price,
                 player_id: input.value
             };
-            
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            tg.sendData(JSON.stringify(payload));
-        };
+
+            // Вибрация при успехе
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+
+            // ОТПРАВКА ДАННЫХ БОТУ
+            tg.sendData(JSON.stringify(data));
+        });
     </script>
 </body>
 </html>
+
